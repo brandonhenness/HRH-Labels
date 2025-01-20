@@ -1,11 +1,13 @@
 import openpyxl
-import os
 
 from ctypes import windll
 from tkinter import filedialog
 import blabel
 
-def get_data(path):
+def get_data():
+    # Open file explorer and get the path to the Excel file
+    path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
+
     # Open the Excel file and get the data from the first sheet
     wb = openpyxl.load_workbook(path)
 
@@ -28,10 +30,6 @@ class Item:
 
 # Write a main function to test the code
 def main():
-     # Open file explorer and get the path to the Excel file
-    path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
-    print(path)
-
     # Set the DPI awareness to Per Monitor v2
     windll.shcore.SetProcessDpiAwareness(1)
     
@@ -42,7 +40,7 @@ def main():
     label_count = 1
     records = []
     record = {}
-    for item in get_data(path):
+    for item in get_data():
         print(item)
         # If the label count is 30, add the record to the list of records
         if label_count > 30:
@@ -70,9 +68,7 @@ def main():
     if label_count > 0:
         records.append(record)
     # Write the labels to a PDF file
-    file_name = os.path.basename(os.path.splitext(path)[0])
-    file_name = f'{file_name}.pdf'
-    label_writer.write_labels(records, target=file_name)
+    label_writer.write_labels(records, target='qrcode_and_label.pdf')
 
 if __name__ == '__main__':
     main()
